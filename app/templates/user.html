@@ -1,0 +1,70 @@
+{% extends "base.html" %} {% block content %}
+<div class="flex-wrapper user-card">
+  <img src="{{ user.avatar(150) }}" />
+
+  <div class="flex-wrapper">
+    <div class="flex-inner padding-left">
+      <h1>{{ user.username }}</h1>
+    </div>
+
+    <div class="flex-inner padding-left edit-link">
+      {% if user == current_user %}
+      <a href="{{ url_for('edit_profile') }}">Edit your profile</a>
+      {% elif not current_user.is_following(user) %}
+      <form
+        action="{{ url_for('follow', username=user.username) }}"
+        method="post"
+      >
+        {{ form.hidden_tag() }} {{ form.submit(value='Follow') }}
+      </form>
+      {% else %}
+      <form
+        action="{{ url_for('unfollow', username=user.username) }}"
+        method="post"
+      >
+        {{ form.hidden_tag() }} {{ form.submit(value='Unfollow') }}
+      </form>
+      {% endif %}
+    </div>
+
+    <div class="break"></div>
+
+    <div class="flex-inner padding-left">
+      {% if user.last_seen %} Last seen on: {{
+      moment(user.last_seen).format('LLL') }} {% endif %}
+    </div>
+
+    <div class="break"></div>
+
+    <div class="flex-inner padding-left">
+      <strong>{{ user.followers_count() }}</strong> followers,
+      <strong>{{ user.following_count() }}</strong>
+      following.
+    </div>
+  </div>
+
+  <div class="break"></div>
+
+  <div class="flex-inner">
+    {% if user.about_me %}
+    <p>{{ user.about_me }}</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="comments-wrapper">
+  <div class="comment-module">
+    <ul>
+      {% for post in posts %} {% include '_post.html' %} {% endfor %}
+    </ul>
+  </div>
+</div>
+
+<div class="pagination-wrapper">
+  {% if next_url %}
+  <a class="pagination older-posts" href="{{ next_url }}">&#11013; Older posts</a>
+  {% endif %} {% if prev_url %}
+  <a class="pagination newer-posts" href="{{ prev_url }}">Newer posts &#11157;</a>
+  {% endif %}
+</div>
+{% endblock %}

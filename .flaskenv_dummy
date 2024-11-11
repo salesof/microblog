@@ -1,0 +1,5 @@
+export MAIL_USERNAME='username'
+export MAIL_PASSWORD='password'
+
+FLASK_APP=microblog.py
+FLASK_DEBUG=1
